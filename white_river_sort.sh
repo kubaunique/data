@@ -5,6 +5,8 @@ path_main_folder="/content/drive/MyDrive/white_river_dataset" #NEED CHANGE TO YO
 percent_files="20" #NEED CHANGE TO YOUR %
 ##########USERS VAR ###############
 
+sudo apt-get install libheif-examples
+pip install pillow-heif
 
 #################################SORT DATA TO FOLDERS######################################################
 echo "create folders val"
