@@ -1,7 +1,7 @@
-rm -rf /content/flowers/flowers
+rm -rf /content/white_river/white_river
 
 ##########USERS VAR ###############
-path_main_folder="/content/flowers" #NEED CHANGE TO YOU FOLDER
+path_main_folder="/content/white_river" #NEED CHANGE TO YOU FOLDER
 percent_files="20" #NEED CHANGE TO YOUR %
 ##########USERS VAR ###############
 
