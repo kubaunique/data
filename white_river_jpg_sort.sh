@@ -1,7 +1,7 @@
-rm -rf /content/drive/MyDrive/white_river_dataset/white_river_dataset
+rm -rf /content/drive/MyDrive/white_river_dataset_jpg/white_river_dataset_jpg
 
 ##########USERS VAR ###############
-path_main_folder="/content/drive/MyDrive/white_river_dataset" #NEED CHANGE TO YOU FOLDER
+path_main_folder="/content/drive/MyDrive/white_river_dataset_jpg" #NEED CHANGE TO YOU FOLDER
 percent_files="20" #NEED CHANGE TO YOUR %
 ##########USERS VAR ###############
 
