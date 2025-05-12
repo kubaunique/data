@@ -1,83 +1,38 @@
-rm -rf /content/drive/MyDrive/white_river_dataset_jpg/white_river_dataset_jpg
+########## USERS VAR ###############
+path_main_folder="/content/drive/MyDrive/white_river_dataset"  
+percent_files="13" 
+########## USERS VAR ###############
 
-##########USERS VAR ###############
-path_main_folder="/content/drive/MyDrive/white_river_dataset_jpg" #NEED CHANGE TO YOU FOLDER
-percent_files="20" #NEED CHANGE TO YOUR %
-##########USERS VAR ###############
+################################# SORT DATA TO FOLDERS ######################################################
+echo "Создаю папку val"
+mkdir -p "$path_main_folder/val"
 
-sudo apt-get install libheif-examples
-pip install pillow-heif
+ls "$path_main_folder" | grep -v -E "val|train" | while read -r CLASS; do
+    echo "=== Обработка класса: $CLASS ==="
+    class_path="$path_main_folder/$CLASS"
+    val_class_path="$path_main_folder/val/$CLASS"
+    
+    mkdir -p "$val_class_path"
 
-#################################SORT DATA TO FOLDERS######################################################
-echo "create folders val"
-mkdir $path_main_folder/val
-folder_val="$path_main_folder/val"
+    total_files=$(ls "$class_path" | wc -l)
+    val_count=$(($total_files * $percent_files / 100))
+    
+    echo "Всего файлов: $total_files | Переносим в val: $val_count"
 
-ls $path_main_folder | grep -v val| while read -r NAME; do
-
-echo " START ###### ${NAME} #####"
-count_files_in_folder=$(ls "$path_main_folder"/"${NAME}" | wc -l)
-echo " count files in folder ${NAME}  $count_files_in_folder"
-
-echo "count percentage $percent_files folder "${NAME}" need move to another folder"
-count_files_need_move=$(echo $(( $count_files_in_folder*$percent_files/100 )))
-echo $count_files_need_move
-
-echo "create folder ${NAME}"
-mkdir $folder_val/"${NAME}"
-chmod -R 777 $path_main_folder
-
-echo "count files which need move to another direcory"
-echo $count_files_need_move
-cd "$path_main_folder"/"${NAME}" && ls | head -"$count_files_need_move" | xargs -I{} sudo mv {} $folder_val/"${NAME}"/
-
-echo "count files in val direcory for ${NAME} "
-ls $folder_val/"${NAME}"/ | wc -l
-
-echo "count files in train direcory for ${NAME} "
-ls "$path_main_folder"/"${NAME}"/ | wc -l
-
-echo " FINISH ###### ${NAME} #####
-"
+    ls "$class_path" | shuf | head -n "$val_count" | while read -r FILE; do
+        mv "$class_path/$FILE" "$val_class_path/"
+    done
 done
-#################################SORT DATA TO FOLDERS######################################################
+################################# SORT DATA TO FOLDERS ######################################################
 
 
-#################################MOVE LEFT DATA TO TRAIN FOLDER######################################################
-echo "create folder train and move all left except folder val to this folder -  it's just rename"
-mkdir $path_main_folder/train
-ls $path_main_folder | grep -v val | grep -v train | while read -r NAME; do
-mv "$path_main_folder"/"${NAME}" $path_main_folder/train/
+################################# MOVE REMAINING DATA TO TRAIN ######################################################
+echo "Создаю папку train и перемещаю оставшиеся"
+mkdir -p "$path_main_folder/train"
+
+ls "$path_main_folder" | grep -v -E "val|train" | while read -r CLASS; do
+    mv "$path_main_folder/$CLASS" "$path_main_folder/train/"
 done
+################################# MOVE REMAINING DATA TO TRAIN ######################################################
 
-echo "
-check again count files per classes in folder train"
-ls $path_main_folder/train/ | while read -r NAME; do
-echo "folder $path_main_folder/train/"${NAME}" "
-ls $path_main_folder/train/"${NAME}"/ | wc -l 
-done
-
-echo "
-check again count files per classes in folder val"
-ls $path_main_folder/train/ | while read -r NAME; do
-echo "folder $path_main_folder/val/"${NAME}" "
-ls $path_main_folder/val/"${NAME}"/ | wc -l 
-done
-#################################MOVE LEFT DATA TO TRAIN FOLDER######################################################
-
-
-#################################DELETE LEFT DATA######################################################
-echo "delete left data in train"
-ls $path_main_folder/train/ | while read -r NAME; do
-echo "folder $path_main_folder/train/"${NAME}" "
-cd $path_main_folder/train/"${NAME}"/ && ls | tail -n +588 | xargs rm -rf
-ls $path_main_folder/train/"${NAME}"/ | wc -l 
-done
-
-echo "delete left data in val"
-ls $path_main_folder/val/ | while read -r NAME; do
-echo "folder $path_main_folder/val/"${NAME}" "
-cd $path_main_folder/val/"${NAME}"/ && ls | tail -n +146 | xargs rm -rf
-ls $path_main_folder/val/"${NAME}"/ | wc -l 
-done
-#################################DELETE LEFT DATA######################################################
+echo "Разделение завершено. Созданы папки train/ и val/"
